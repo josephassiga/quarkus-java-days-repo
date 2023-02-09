@@ -1,2 +1,2 @@
-# quarkus-java-days-repo-
+# quarkus-java-days-repo
 Quarkus Java Days Online Summit 2023
