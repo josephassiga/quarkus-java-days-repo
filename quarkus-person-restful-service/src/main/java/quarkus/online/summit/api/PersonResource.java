@@ -18,7 +18,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import quarkus.online.summit.entity.Person;
+import quarkus.online.summit.featuretoggles.Features;
 import quarkus.online.summit.service.PersonService;
+import quarkus.online.summit.utils.FeatureEnum;
 
 @Path("/person")
 // Indicates that the services will read the request’s body by deserializing
@@ -37,9 +39,25 @@ public class PersonResource {
     @Inject
     public PersonService personService;
 
+    @Inject
+    public Features appFeatures;
+
     @GET
     public List<Person> list() {
         return personService.list();
+    }
+
+    @GET
+    @Path("/featureToggles/{feature}")
+    public Response featureToggles(final @PathParam("feature") String feature) {
+
+        String aFeature = String.format(FeatureEnum.NONE.getName(), feature);
+        if (FeatureEnum.INTERFACE.toString().equalsIgnoreCase(feature) && appFeatures.newUserInterfacceEnbaled()) {
+            aFeature = FeatureEnum.INTERFACE.getName().toString();
+        } else if (FeatureEnum.ALGORITHM.toString().equalsIgnoreCase(feature) && appFeatures.alternativeAlgorithmEnabled()) {
+            aFeature = FeatureEnum.ALGORITHM.getName().toString();
+        }
+        return Response.ok().entity(aFeature).build();
     }
 
     @POST
