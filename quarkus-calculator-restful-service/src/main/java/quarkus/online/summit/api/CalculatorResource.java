@@ -1,7 +1,5 @@
 package quarkus.online.summit.api;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -9,7 +7,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +18,13 @@ import quarkus.online.summit.services.CalculatorService;
 // JSON. This will make
 // the service accept requests with the header Content-Type and value
 // application/json.
-@Consumes(MediaType.TEXT_PLAIN)
+@Consumes(MediaType.APPLICATION_JSON)
 // Automates JSON serialization for you. Your services can return objects, which
 // will be
 // analyzed and automatically generate the JSON output. Sets the value of the
 // Content-Type
 // header on the response to application/json.
-@Produces(MediaType.TEXT_PLAIN)
+@Produces(MediaType.APPLICATION_JSON)
 public class CalculatorResource {
 
     final Logger LOG = LoggerFactory.getLogger(CalculatorResource.class);
@@ -41,7 +38,7 @@ public class CalculatorResource {
 
     @GET
     @Path("{equation}")
-    public Response calculate(final @PathParam("equation") String equation) {
+    public Float calculate(final @PathParam("equation") String equation) {
         LOG.info(String.format("The equation to process : %s", equation));
         String[] operands;
         Float result = 0F;
@@ -52,6 +49,6 @@ public class CalculatorResource {
             operands = equation.split("\\" + MULTIPLICATION);
             result = calculatorService.multiply(operands[0], operands[1]);
         }
-        return Response.ok(result).build();
+        return result;
     }
 }

@@ -17,10 +17,16 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+import quarkus.online.summit.calculator.CalculatorService;
 import quarkus.online.summit.entity.Person;
 import quarkus.online.summit.featuretoggles.Features;
 import quarkus.online.summit.service.PersonService;
 import quarkus.online.summit.utils.FeatureEnum;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Path("/person")
 // Indicates that the services will read the request’s body by deserializing
@@ -36,11 +42,19 @@ import quarkus.online.summit.utils.FeatureEnum;
 @Produces(MediaType.APPLICATION_JSON)
 public class PersonResource {
 
+
+    final Logger LOG = LoggerFactory.getLogger(PersonResource.class);
+
     @Inject
     public PersonService personService;
 
     @Inject
     public Features appFeatures;
+
+    @Inject
+    @RestClient
+   public CalculatorService calculatorService;
+
 
     @GET
     public List<Person> list() {
@@ -58,6 +72,13 @@ public class PersonResource {
             aFeature = FeatureEnum.ALGORITHM.getName().toString();
         }
         return Response.ok().entity(aFeature).build();
+    }
+
+    @GET
+    @Path("/calculator/{equation}")
+    public Response calculate(final @PathParam("equation") String equation) {
+        LOG.info(String.format("The equation to process : %s", equation));
+        return Response.ok(calculatorService.calculate(equation)).build();
     }
 
     @POST
