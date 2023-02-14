@@ -29,6 +29,8 @@ import quarkus.online.summit.utils.FeatureEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.micrometer.core.annotation.Counted;
+
 @Path("/person")
 // Indicates that the services will read the request’s body by deserializing
 // JSON. This will make
@@ -56,6 +58,7 @@ public class PersonResource {
     public CalculatorService calculatorService;
 
     @GET
+    @Counted(value="all_persons", description = "count number of time we retrieve all persons")
     public List<Person> list() {
         return personService.list();
     }
