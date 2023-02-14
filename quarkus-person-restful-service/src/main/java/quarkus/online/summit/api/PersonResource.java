@@ -61,25 +61,6 @@ public class PersonResource {
         return personService.list();
     }
 
-    @GET
-    @Path("/featureToggles/{feature}")
-    public Response featureToggles(final @PathParam("feature") String feature) {
-
-        String aFeature = String.format(FeatureEnum.NONE.getName(), feature);
-        if (FeatureEnum.INTERFACE.toString().equalsIgnoreCase(feature) && appFeatures.newUserInterfacceEnbaled()) {
-            aFeature = FeatureEnum.INTERFACE.getName().toString();
-        } else if (FeatureEnum.ALGORITHM.toString().equalsIgnoreCase(feature) && appFeatures.alternativeAlgorithmEnabled()) {
-            aFeature = FeatureEnum.ALGORITHM.getName().toString();
-        }
-        return Response.ok().entity(aFeature).build();
-    }
-
-    @GET
-    @Path("/calculator/{equation}")
-    public Response calculate(final @PathParam("equation") String equation) {
-        LOG.info(String.format("The equation to process : %s", equation));
-        return Response.ok(calculatorService.calculate(equation)).build();
-    }
 
     @POST
     @Transactional
@@ -103,4 +84,23 @@ public class PersonResource {
         personService.update(person);
     }
 
+    @GET
+    @Path("/featureToggles/{feature}")
+    public Response featureToggles(final @PathParam("feature") String feature) {
+
+        String aFeature = String.format(FeatureEnum.NONE.getName(), feature);
+        if (FeatureEnum.INTERFACE.toString().equalsIgnoreCase(feature) && appFeatures.newUserInterfacceEnbaled()) {
+            aFeature = FeatureEnum.INTERFACE.getName().toString();
+        } else if (FeatureEnum.ALGORITHM.toString().equalsIgnoreCase(feature) && appFeatures.alternativeAlgorithmEnabled()) {
+            aFeature = FeatureEnum.ALGORITHM.getName().toString();
+        }
+        return Response.ok().entity(aFeature).build();
+    }
+
+    @GET
+    @Path("/calculator/{equation}")
+    public Response calculate(final @PathParam("equation") String equation) {
+        LOG.info(String.format("The equation to process : %s", equation));
+        return Response.ok(calculatorService.calculate(equation)).build();
+    }
 }
