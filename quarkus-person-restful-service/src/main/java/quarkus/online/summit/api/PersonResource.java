@@ -3,6 +3,7 @@ package quarkus.online.summit.api;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
@@ -42,7 +43,6 @@ import org.slf4j.LoggerFactory;
 @Produces(MediaType.APPLICATION_JSON)
 public class PersonResource {
 
-
     final Logger LOG = LoggerFactory.getLogger(PersonResource.class);
 
     @Inject
@@ -53,14 +53,12 @@ public class PersonResource {
 
     @Inject
     @RestClient
-   public CalculatorService calculatorService;
-
+    public CalculatorService calculatorService;
 
     @GET
     public List<Person> list() {
         return personService.list();
     }
-
 
     @POST
     @Transactional
@@ -91,7 +89,8 @@ public class PersonResource {
         String aFeature = String.format(FeatureEnum.NONE.getName(), feature);
         if (FeatureEnum.INTERFACE.toString().equalsIgnoreCase(feature) && appFeatures.newUserInterfacceEnbaled()) {
             aFeature = FeatureEnum.INTERFACE.getName().toString();
-        } else if (FeatureEnum.ALGORITHM.toString().equalsIgnoreCase(feature) && appFeatures.alternativeAlgorithmEnabled()) {
+        } else if (FeatureEnum.ALGORITHM.toString().equalsIgnoreCase(feature)
+                && appFeatures.alternativeAlgorithmEnabled()) {
             aFeature = FeatureEnum.ALGORITHM.getName().toString();
         }
         return Response.ok().entity(aFeature).build();
@@ -102,5 +101,12 @@ public class PersonResource {
     public Response calculate(final @PathParam("equation") String equation) {
         LOG.info(String.format("The equation to process : %s", equation));
         return Response.ok(calculatorService.calculate(equation)).build();
+    }
+
+    @GET
+    @RolesAllowed("admin")
+    @Path("/admin")
+    public List<Person> listPersonsWithSecurity() {
+        return personService.list();
     }
 }
